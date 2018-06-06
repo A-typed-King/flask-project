@@ -1,0 +1,70 @@
+{% extends 'news/base.html' %}
+{% block head %}
+    <title>用户概况</title>
+    <link rel="stylesheet" type="text/css" href="/static/news/css/jquery.pagination.css">
+    <script type="text/javascript" src="/static/news/js/jquery.pagination.min.js"></script>
+    <script type="text/javascript" src="/static/news/js/other.js"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="conter_con">
+        <div class="user_menu_con fl">
+            <div class="user_center_pic">
+                <img src="{{ other_user.avatar_url }}" alt="用户图片">
+            </div>
+            <div class="user_center_name">{{ other_user.nick_name }}</div>
+
+            <ul class="other_detail">
+                <li>性 别：{{ gender }}</li>
+                <li>签 名：{{ other_user.signature }}</li>
+            </ul>
+
+            <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" id="user_id" value="{{ other_user.id }}">
+            {#            <input type="hidden" id="news_id" value="{{ news.id }}">#}
+            {% if user %}
+                {% if other_user in user.follow_user %}
+                    <a href="javascript:;" class="focus fr" style="display: none;">关注</a>
+                    <a href="javascript:;" class="focused fr" id="quxiao" ><span class="out" >已关注</span><span
+                            class="over">取消关注</span></a>
+                {% else %}
+                    <a href="javascript:;" class="focus fr">关注</a>
+                    <a href="javascript:;" class="focused fr" style="display: none;"><span
+                            class="out">已关注</span><span class="over">取消关注</span></a>
+                {% endif %}
+            {% else %}
+                <a href="javascript:;" class="focus fr">关注</a>
+                <a href="javascript:;" class="focused fr" style="display: none;"><span class="out">已关注</span><span
+                        class="over">取消关注</span></a>
+            {% endif %}
+        </div>
+
+
+        <div class="user_con fr">
+            <div class="other_collect">
+                <h3>他的文章</h3>
+                <ul class="article_list">
+                    {% for news in news_list %}    {# 出错点：news_list被写成other_users.news #}
+                        <li><a href="/{{ news.id }}">{{ news.summary }}</a><span>{{ news.update_time }}</span></li>
+                    {% endfor %}
+                </ul>
+
+                <div id="pagination" class="page"></div>
+                <script>
+                    $(function () {
+                        $("#pagination").pagination({
+                            currentPage: {{ page }},
+                            totalPage: {{ total_page }},
+                            callback: function (current) {
+                                location.href = '?page=' + current;
+                            }
+                        });
+                    });
+                </script>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+
